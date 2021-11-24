@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import LoginForms from '../components/LoginForms';
@@ -57,15 +58,25 @@ class Login extends Component {
   render() {
     const { name, email, isBtnDisabled } = this.state;
     return (
-      <section className="d-flex justify-content-center align-items-center">
-        <LoginForms
-          name={ name }
-          email={ email }
-          isBtnDisabled={ isBtnDisabled }
-          handleChange={ this.handleChange }
-          handleSubmit={ this.handleSubmit }
-        />
-      </section>
+      <>
+        <section className="d-flex justify-content-center align-items-center">
+          <LoginForms
+            name={ name }
+            email={ email }
+            isBtnDisabled={ isBtnDisabled }
+            handleChange={ this.handleChange }
+            handleSubmit={ this.handleSubmit }
+          />
+        </section>
+        <Link to="/settings">
+          <button
+            type="button"
+            data-testid="btn-settings"
+          >
+            Configurações
+          </button>
+        </Link>
+      </>
     );
   }
 }
