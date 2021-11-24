@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Link } from 'react-router-dom';
 
 class Login extends Component {
   constructor(props) {
@@ -32,49 +33,59 @@ class Login extends Component {
   render() {
     const { name, email, isBtnDisabled } = this.state;
     return (
-      <section className="d-flex justify-content-center align-items-center">
-        <form>
-          <div className="mb-3">
-            <label htmlFor="name-input" className="form-label">
-              Usuário
-              <input
-                type="text"
-                className="form-control"
-                id="name-input"
-                data-testid="input-player-name"
-                name="name"
-                value={ name }
-                onChange={ this.handleChange }
-                required
-              />
-            </label>
-          </div>
-          <div className="mb-3">
-            <label htmlFor="email-input" className="form-label">
-              Email
-              <input
-                type="email"
-                className="form-control"
-                id="email"
-                aria-describedby="emailHelp"
-                data-testid="input-gravatar-email"
-                name="email"
-                value={ email }
-                onChange={ this.handleChange }
-                required
-              />
-            </label>
-          </div>
+      <>
+        <section className="d-flex justify-content-center align-items-center">
+          <form>
+            <div className="mb-3">
+              <label htmlFor="name-input" className="form-label">
+                Usuário
+                <input
+                  type="text"
+                  className="form-control"
+                  id="name-input"
+                  data-testid="input-player-name"
+                  name="name"
+                  value={ name }
+                  onChange={ this.handleChange }
+                  required
+                />
+              </label>
+            </div>
+            <div className="mb-3">
+              <label htmlFor="email-input" className="form-label">
+                Email
+                <input
+                  type="email"
+                  className="form-control"
+                  id="email"
+                  aria-describedby="emailHelp"
+                  data-testid="input-gravatar-email"
+                  name="email"
+                  value={ email }
+                  onChange={ this.handleChange }
+                  required
+                />
+              </label>
+            </div>
+            <button
+              data-testid="btn-play"
+              type="submit"
+              className="btn btn-primary"
+              disabled={ isBtnDisabled }
+            >
+              Jogar
+            </button>
+          </form>
+        </section>
+        <Link to="/settings">
           <button
-            data-testid="btn-play"
-            type="submit"
-            className="btn btn-primary"
-            disabled={ isBtnDisabled }
+            type="button"
+            data-testid="btn-settings"
           >
-            Jogar
+            Configurações
           </button>
-        </form>
-      </section>
+        </Link>
+      </>
     );
   }
 }
