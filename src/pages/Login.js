@@ -3,8 +3,8 @@ import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import LoginForms from '../components/LoginForms';
-import { fetchTokenAPI } from '../helpers/fetchTokenAPI';
 import { login } from '../redux/actions';
+import { fetchTokenAPI } from '../helpers/fetchTokenAPI';
 
 class Login extends Component {
   constructor(props) {
@@ -40,14 +40,13 @@ class Login extends Component {
     e.preventDefault();
     const { name, email } = this.state;
     const { history, dispatch } = this.props;
-
-    const response = await fetchTokenAPI();
+    const data = await fetchTokenAPI();
 
     const payload = {
       name,
       email,
       keyName: 'token',
-      token: response.token,
+      token: data.token,
     };
 
     dispatch(login(payload));

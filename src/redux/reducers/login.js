@@ -1,4 +1,4 @@
-import { LOGIN } from '../actions';
+import { LOGIN, REQUEST_API } from '../actions';
 import { setLocalStorage } from '../../helpers/handleLocalStorage';
 
 const initialState = {
@@ -8,6 +8,8 @@ const initialState = {
 
 function loginReducer(state = initialState, { type, payload }) {
   switch (type) {
+  case REQUEST_API:
+    return { ...state, isFetching: true };
   case LOGIN: {
     setLocalStorage(payload.keyName, payload.token);
     return { ...state, email: payload.email, name: payload.name };
