@@ -1,6 +1,10 @@
 import React, { Component } from 'react';
 import Loading from '../components/Loading';
+import Header from '../components/Header';
 import fetchTriviaQuestions from '../helpers/fetchTriviaQuestions';
+import { getLocalStorage } from '../helpers/handleLocalStorage';
+import Questions from '../components/Questions';
+import Answers from '../components/Answers';
 
 class Game extends Component {
   constructor() {
@@ -18,8 +22,8 @@ class Game extends Component {
   }
 
   async componentDidMount() {
-    // aqui tem que puxar o token do localStorage para acessar a API que será passada por parâmetro da função abaixo;
-    const triviaData = await fetchTriviaQuestions('token');
+    const token = getLocalStorage('token');
+    const triviaData = await fetchTriviaQuestions(token);
     this.setStateInDidMount(triviaData);
   }
 
@@ -32,7 +36,7 @@ class Game extends Component {
 
   handleClick() {
     const { triviaIndex } = this.state;
-    const MAX_QUESTIONS = 5;
+    const MAX_QUESTIONS = 4;
 
     if (triviaIndex < MAX_QUESTIONS) {
       this.setState({
@@ -41,23 +45,18 @@ class Game extends Component {
     }
   }
 
-  //   {
-  //     "response_code":0,
-  //     "results":[
-  //        {
-  //           "category":"Entertainment: Video Games",
-  //           "type":"multiple",
-  //           "difficulty":"easy",
-  //           "question":"What is the first weapon you acquire in Half-Life?",
-  //           "correct_answer":"A crowbar",
-  //           "incorrect_answers":[
-  //              "A pistol",
-  //              "The H.E.V suit",
-  //              "Your fists"
-  //           ]
-  //        }
-  //     ]
-  //  }
+  shuffleAnswers(incorrectAnswers, correctAnswer) {
+    const newArray = [...incorrectAnswers, correctAnswer];
+    const randomIndex = Math.floor(Math.random() * newArray.length);
+    const answersArray = [
+      ...incorrectAnswers.slice(0, randomIndex),
+      correctAnswer,
+      ...incorrectAnswers.slice(randomIndex),
+    ];
+
+    return answersArray;
+  }
+
   renderActualQuestion() {
     const { triviaData, triviaIndex } = this.state;
 
@@ -66,33 +65,18 @@ class Game extends Component {
       question,
       correct_answer: correctAnswer,
       incorrect_answers: incorrectAnswers,
-    } = triviaData[triviaIndex].results;
+    } = triviaData.results[triviaIndex];
+
+    const shuffledAnswersArray = this.shuffleAnswers(incorrectAnswers, correctAnswer);
 
     return (
       <div>
-        <div id="trivia-question">
-          <p data-testid="question-category">{ category }</p>
-          <p data-testid="question-text">{ question }</p>
-        </div>
-        <div>
-          <button
-            data-testid="correct-answer"
-            onClick={ this.handleClick }
-            type="button"
-          >
-            { correctAnswer }
-          </button>
-          { incorrectAnswers.map((incorrect, index) => (
-            <button
-              data-testid={ `wrong-answer-${index}` }
-              onClick={ this.handleClick }
-              type="button"
-              key={ index }
-            >
-              { incorrect }
-            </button>
-          )) }
-        </div>
+        <Questions category={ category } question={ question } />
+        <Answers
+          handleClick={ this.handleClick }
+          correctAnswer={ correctAnswer }
+          answersArray={ shuffledAnswersArray }
+        />
       </div>
     );
   }
@@ -102,6 +86,7 @@ class Game extends Component {
 
     return (
       <div>
+        <Header />
         <h1>Jogo de Trivia</h1>
         { loading ? <Loading /> : this.renderActualQuestion() }
       </div>
