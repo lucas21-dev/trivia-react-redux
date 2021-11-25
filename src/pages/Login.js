@@ -3,8 +3,7 @@ import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import LoginForms from '../components/LoginForms';
-import { fetchTokenAPI } from '../helpers/fetchTokenAPI';
-import { login } from '../redux/actions';
+import { fetchLoginTokenAPI } from '../redux/actions';
 
 class Login extends Component {
   constructor(props) {
@@ -36,21 +35,18 @@ class Login extends Component {
     this.setState({ [name]: value }, this.isFormValid);
   }
 
-  async handleSubmit(e) {
+  handleSubmit(e) {
     e.preventDefault();
     const { name, email } = this.state;
     const { history, dispatch } = this.props;
 
-    const response = await fetchTokenAPI();
-
-    const payload = {
+    const data = {
       name,
       email,
       keyName: 'token',
-      token: response.token,
     };
 
-    dispatch(login(payload));
+    dispatch(fetchLoginTokenAPI(data));
 
     history.push('/game');
   }
