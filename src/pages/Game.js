@@ -66,8 +66,6 @@ class Game extends Component {
     if (timerInSecs > 0) this.setState({ timerInSecs: timerInSecs - 1 });
   }
 
-  
-
   shuffleAnswers(incorrectAnswers, correctAnswer) {
     const newArray = [...incorrectAnswers, correctAnswer];
     const randomIndex = Math.floor(Math.random() * newArray.length);
@@ -125,7 +123,9 @@ class Game extends Component {
           answersArray={ shuffledAnswersArray }
           isQuestionAnswered={ isQuestionAnswered }
         />
-        <button type="button" onClick={ this.handleNextBtnClick }>Próxima pergunta</button>
+        <button type="button" onClick={ this.handleNextBtnClick }>
+          Próxima pergunta
+        </button>
       </div>
     );
   }
