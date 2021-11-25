@@ -2,11 +2,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 class Answers extends React.Component {
-
   render() {
     const { handleClick, correctAnswer, answersArray, isQuestionAnswered } = this.props;
-
-    
 
     return (
       <div id="trivia-answers">
@@ -21,7 +18,6 @@ class Answers extends React.Component {
             __html: answer,
           };
 
-
           return (
             <button
               aria-label="Answer"
@@ -31,6 +27,7 @@ class Answers extends React.Component {
               key={ index }
               className={ classList }
               dangerouslySetInnerHTML={ innerHTML }
+              disabled={ isQuestionAnswered }
             />
           );
         }) }
@@ -42,6 +39,7 @@ class Answers extends React.Component {
 Answers.propTypes = {
   handleClick: PropTypes.func.isRequired,
   correctAnswer: PropTypes.string.isRequired,
+  isQuestionAnswered: PropTypes.bool.isRequired,
   answersArray: PropTypes.arrayOf(PropTypes.string).isRequired,
 };
 

@@ -5,7 +5,7 @@ import fetchTriviaQuestions from '../helpers/fetchTriviaQuestions';
 import { getLocalStorage } from '../helpers/handleLocalStorage';
 import Questions from '../components/Questions';
 import Answers from '../components/Answers';
-import '../styles/gameStyle.css';
+import '../styles/game.css';
 import Timer from '../components/Timer';
 
 class Game extends Component {
@@ -63,10 +63,10 @@ class Game extends Component {
   countDown() {
     const { timerInSecs } = this.state;
 
-    if (timerInSecs > 0) this.setState({ timerInSecs: timerInSecs - 1 });
+    return timerInSecs > 0
+      ? this.setState({ timerInSecs: timerInSecs - 1 })
+      : this.setState({ isQuestionAnswered: true });
   }
-
-  
 
   shuffleAnswers(incorrectAnswers, correctAnswer) {
     const newArray = [...incorrectAnswers, correctAnswer];
@@ -116,6 +116,10 @@ class Game extends Component {
       correctAnswer,
     );
 
+    const btnNextClassList = isQuestionAnswered
+      ? 'btn-next-visible'
+      : 'btn-next-hidden';
+
     return (
       <div>
         <Questions category={ category } question={ question } />
@@ -125,7 +129,14 @@ class Game extends Component {
           answersArray={ shuffledAnswersArray }
           isQuestionAnswered={ isQuestionAnswered }
         />
-        <button type="button" onClick={ this.handleNextBtnClick }>Próxima pergunta</button>
+        <button
+          className={ btnNextClassList }
+          data-testid="btn-next"
+          type="button"
+          onClick={ this.handleNextBtnClick }
+        >
+          Próxima
+        </button>
       </div>
     );
   }
