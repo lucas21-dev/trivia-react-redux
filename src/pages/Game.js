@@ -5,7 +5,7 @@ import fetchTriviaQuestions from '../helpers/fetchTriviaQuestions';
 import { getLocalStorage } from '../helpers/handleLocalStorage';
 import Questions from '../components/Questions';
 import Answers from '../components/Answers';
-import '../styles/gameStyle.css';
+import '../styles/game.css';
 import Timer from '../components/Timer';
 
 class Game extends Component {
