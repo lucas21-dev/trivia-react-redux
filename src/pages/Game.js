@@ -6,6 +6,7 @@ import { getLocalStorage } from '../helpers/handleLocalStorage';
 import Questions from '../components/Questions';
 import Answers from '../components/Answers';
 import '../styles/gameStyle.css';
+import Timer from '../components/Timer';
 
 class Game extends Component {
   constructor() {
@@ -16,18 +17,31 @@ class Game extends Component {
       loading: true,
       triviaIndex: 0,
       isQuestionAnswered: false,
+      timerInSecs: 30,
     };
+
+    this.timer = 0;
+    this.ONE_SECOND = 1000;
 
     this.renderActualQuestion = this.renderActualQuestion.bind(this);
     this.setStateInDidMount = this.setStateInDidMount.bind(this);
     this.handleClick = this.handleClick.bind(this);
     this.handleNextBtnClick = this.handleNextBtnClick.bind(this);
+    this.countDown = this.countDown.bind(this);
+    this.clearCountDownInterval = this.clearCountDownInterval.bind(this);
+    this.startCountDown = this.startCountDown.bind(this);
   }
 
   async componentDidMount() {
+    const { triviaData } = this.state;
     const token = getLocalStorage('token');
-    const triviaData = await fetchTriviaQuestions(token);
-    this.setStateInDidMount(triviaData);
+
+    if (!triviaData) {
+      const response = await fetchTriviaQuestions(token);
+
+      this.setStateInDidMount(response);
+    }
+    this.startCountDown();
   }
 
   setStateInDidMount(triviaData) {
@@ -37,13 +51,22 @@ class Game extends Component {
     });
   }
 
-  handleClick({ target }) {
-    this.setState({
-      isQuestionAnswered: true,
-    })
-
-    
+  startCountDown() {
+    this.setState({ timerInSecs: 30 });
+    this.timer = setInterval(this.countDown, this.ONE_SECOND);
   }
+
+  clearCountDownInterval() {
+    clearInterval(this.timer);
+  }
+
+  countDown() {
+    const { timerInSecs } = this.state;
+
+    if (timerInSecs > 0) this.setState({ timerInSecs: timerInSecs - 1 });
+  }
+
+  
 
   shuffleAnswers(incorrectAnswers, correctAnswer) {
     const newArray = [...incorrectAnswers, correctAnswer];
@@ -57,6 +80,14 @@ class Game extends Component {
     return answersArray;
   }
 
+  handleClick() {
+    this.clearCountDownInterval();
+
+    this.setState({
+      isQuestionAnswered: true,
+    });
+  }
+
   handleNextBtnClick() {
     const { triviaIndex } = this.state;
     const MAX_QUESTIONS = 4;
@@ -66,6 +97,7 @@ class Game extends Component {
         triviaIndex: triviaIndex + 1,
         isQuestionAnswered: false,
       });
+      this.startCountDown();
     }
   }
 
@@ -79,7 +111,10 @@ class Game extends Component {
       incorrect_answers: incorrectAnswers,
     } = triviaData.results[triviaIndex];
 
-    const shuffledAnswersArray = this.shuffleAnswers(incorrectAnswers, correctAnswer);
+    const shuffledAnswersArray = this.shuffleAnswers(
+      incorrectAnswers,
+      correctAnswer,
+    );
 
     return (
       <div>
@@ -96,13 +131,14 @@ class Game extends Component {
   }
 
   render() {
-    const { loading } = this.state;
+    const { loading, timerInSecs } = this.state;
 
     return (
       <div>
         <Header />
-        <h2>Jogo de Trivia</h2>
-        { loading ? <Loading /> : this.renderActualQuestion() }
+        <h1>Jogo de Trivia</h1>
+        {loading ? <Loading /> : this.renderActualQuestion()}
+        <Timer timerInSecs={ timerInSecs } />
       </div>
     );
   }
