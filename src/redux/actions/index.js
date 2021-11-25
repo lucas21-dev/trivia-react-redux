@@ -14,14 +14,12 @@ export const requestSuccess = (payload) => ({
   payload,
 });
 
-export const fetchLoginTokenAPI = (data) => (dispatch) => {
+export const fetchLoginTokenAPI = (data) => async (dispatch) => {
   dispatch(requestAPI());
-  return fetchTokenAPI()
-    .then((json) => {
-      const payload = {
-        ...data,
-        token: json.token,
-      };
-      dispatch(login(payload));
-    });
+  const json = await fetchTokenAPI();
+  const payload = {
+    ...data,
+    token: json.token,
+  };
+  dispatch(login(payload));
 };

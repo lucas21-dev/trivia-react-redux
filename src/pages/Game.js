@@ -5,6 +5,7 @@ import fetchTriviaQuestions from '../helpers/fetchTriviaQuestions';
 import { getLocalStorage } from '../helpers/handleLocalStorage';
 import Questions from '../components/Questions';
 import Answers from '../components/Answers';
+import '../styles/gameStyle.css';
 
 class Game extends Component {
   constructor() {
@@ -14,11 +15,13 @@ class Game extends Component {
       triviaData: '',
       loading: true,
       triviaIndex: 0,
+      isQuestionAnswered: false,
     };
 
     this.renderActualQuestion = this.renderActualQuestion.bind(this);
     this.setStateInDidMount = this.setStateInDidMount.bind(this);
     this.handleClick = this.handleClick.bind(this);
+    this.handleNextBtnClick = this.handleNextBtnClick.bind(this);
   }
 
   async componentDidMount() {
@@ -34,15 +37,12 @@ class Game extends Component {
     });
   }
 
-  handleClick() {
-    const { triviaIndex } = this.state;
-    const MAX_QUESTIONS = 4;
+  handleClick({ target }) {
+    this.setState({
+      isQuestionAnswered: true,
+    })
 
-    if (triviaIndex < MAX_QUESTIONS) {
-      this.setState({
-        triviaIndex: triviaIndex + 1,
-      });
-    }
+    
   }
 
   shuffleAnswers(incorrectAnswers, correctAnswer) {
@@ -57,8 +57,20 @@ class Game extends Component {
     return answersArray;
   }
 
+  handleNextBtnClick() {
+    const { triviaIndex } = this.state;
+    const MAX_QUESTIONS = 4;
+
+    if (triviaIndex < MAX_QUESTIONS) {
+      this.setState({
+        triviaIndex: triviaIndex + 1,
+        isQuestionAnswered: false,
+      });
+    }
+  }
+
   renderActualQuestion() {
-    const { triviaData, triviaIndex } = this.state;
+    const { triviaData, triviaIndex, isQuestionAnswered } = this.state;
 
     const {
       category,
@@ -76,7 +88,9 @@ class Game extends Component {
           handleClick={ this.handleClick }
           correctAnswer={ correctAnswer }
           answersArray={ shuffledAnswersArray }
+          isQuestionAnswered={ isQuestionAnswered }
         />
+        <button type="button" onClick={ this.handleNextBtnClick }>Próxima pergunta</button>
       </div>
     );
   }
@@ -87,7 +101,7 @@ class Game extends Component {
     return (
       <div>
         <Header />
-        <h1>Jogo de Trivia</h1>
+        <h2>Jogo de Trivia</h2>
         { loading ? <Loading /> : this.renderActualQuestion() }
       </div>
     );
