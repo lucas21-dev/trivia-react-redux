@@ -16,6 +16,7 @@ class Answers extends React.Component {
 
           return (
             <button
+              aria-label="Answer"
               data-testid={ testId }
               onClick={ handleClick }
               type="button"
