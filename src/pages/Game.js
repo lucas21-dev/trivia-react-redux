@@ -5,6 +5,7 @@ import fetchTriviaQuestions from '../helpers/fetchTriviaQuestions';
 import { getLocalStorage } from '../helpers/handleLocalStorage';
 import Questions from '../components/Questions';
 import Answers from '../components/Answers';
+import '../styles/gameStyle.css';
 import Timer from '../components/Timer';
 
 class Game extends Component {
@@ -15,6 +16,7 @@ class Game extends Component {
       triviaData: '',
       loading: true,
       triviaIndex: 0,
+      isQuestionAnswered: false,
       timerInSecs: 30,
     };
 
@@ -24,6 +26,7 @@ class Game extends Component {
     this.renderActualQuestion = this.renderActualQuestion.bind(this);
     this.setStateInDidMount = this.setStateInDidMount.bind(this);
     this.handleClick = this.handleClick.bind(this);
+    this.handleNextBtnClick = this.handleNextBtnClick.bind(this);
     this.countDown = this.countDown.bind(this);
     this.clearCountDownInterval = this.clearCountDownInterval.bind(this);
     this.startCountDown = this.startCountDown.bind(this);
@@ -63,17 +66,7 @@ class Game extends Component {
     if (timerInSecs > 0) this.setState({ timerInSecs: timerInSecs - 1 });
   }
 
-  handleClick() {
-    const { triviaIndex } = this.state;
-    const MAX_QUESTIONS = 4;
-
-    if (triviaIndex < MAX_QUESTIONS) {
-      this.setState({
-        triviaIndex: triviaIndex + 1,
-      });
-    }
-    this.clearCountDownInterval();
-  }
+  
 
   shuffleAnswers(incorrectAnswers, correctAnswer) {
     const newArray = [...incorrectAnswers, correctAnswer];
@@ -87,8 +80,29 @@ class Game extends Component {
     return answersArray;
   }
 
+  handleClick() {
+    this.clearCountDownInterval();
+
+    this.setState({
+      isQuestionAnswered: true,
+    });
+  }
+
+  handleNextBtnClick() {
+    const { triviaIndex } = this.state;
+    const MAX_QUESTIONS = 4;
+
+    if (triviaIndex < MAX_QUESTIONS) {
+      this.setState({
+        triviaIndex: triviaIndex + 1,
+        isQuestionAnswered: false,
+      });
+      this.startCountDown();
+    }
+  }
+
   renderActualQuestion() {
-    const { triviaData, triviaIndex } = this.state;
+    const { triviaData, triviaIndex, isQuestionAnswered } = this.state;
 
     const {
       category,
@@ -109,7 +123,9 @@ class Game extends Component {
           handleClick={ this.handleClick }
           correctAnswer={ correctAnswer }
           answersArray={ shuffledAnswersArray }
+          isQuestionAnswered={ isQuestionAnswered }
         />
+        <button type="button" onClick={ this.handleNextBtnClick }>Próxima pergunta</button>
       </div>
     );
   }
