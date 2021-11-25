@@ -116,6 +116,10 @@ class Game extends Component {
       correctAnswer,
     );
 
+    const btnNextClassList = isQuestionAnswered
+      ? 'btn-next-visible'
+      : 'btn-next-hidden';
+
     return (
       <div>
         <Questions category={ category } question={ question } />
@@ -125,8 +129,13 @@ class Game extends Component {
           answersArray={ shuffledAnswersArray }
           isQuestionAnswered={ isQuestionAnswered }
         />
-        <button type="button" onClick={ this.handleNextBtnClick }>
-          Próxima pergunta
+        <button
+          className={ btnNextClassList }
+          data-testid="btn-next"
+          type="button"
+          onClick={ this.handleNextBtnClick }
+        >
+          Próxima
         </button>
       </div>
     );
