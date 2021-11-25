@@ -63,7 +63,9 @@ class Game extends Component {
   countDown() {
     const { timerInSecs } = this.state;
 
-    if (timerInSecs > 0) this.setState({ timerInSecs: timerInSecs - 1 });
+    return timerInSecs > 0
+      ? this.setState({ timerInSecs: timerInSecs - 1 })
+      : this.setState({ isQuestionAnswered: true });
   }
 
   shuffleAnswers(incorrectAnswers, correctAnswer) {

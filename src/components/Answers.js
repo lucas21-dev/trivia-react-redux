@@ -27,6 +27,7 @@ class Answers extends React.Component {
               key={ index }
               className={ classList }
               dangerouslySetInnerHTML={ innerHTML }
+              disabled={ isQuestionAnswered }
             />
           );
         }) }
