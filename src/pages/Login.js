@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import LoginForms from '../components/LoginForms';
 import { login } from '../redux/actions';
+import { setLocalStorage } from '../helpers/handleLocalStorage';
 import { fetchTokenAPI } from '../helpers/fetchTokenAPI';
 
 class Login extends Component {
@@ -40,14 +41,24 @@ class Login extends Component {
     e.preventDefault();
     const { name, email } = this.state;
     const { history, dispatch } = this.props;
-    const data = await fetchTokenAPI();
+    const { token } = await fetchTokenAPI();
 
     const payload = {
       name,
       email,
-      keyName: 'token',
-      token: data.token,
     };
+
+    const state = {
+      player: {
+        name,
+        assertions: 0,
+        score: 0,
+        gravatarEmail: '',
+      },
+    };
+
+    setLocalStorage('state', state);
+    setLocalStorage('token', token);
 
     dispatch(login(payload));
 
