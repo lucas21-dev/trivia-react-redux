@@ -160,6 +160,7 @@ class Game extends Component {
 
   handleNextBtnClick() {
     const { triviaIndex } = this.state;
+    const { history } = this.props;
     const MAX_QUESTIONS = 4;
 
     if (triviaIndex < MAX_QUESTIONS) {
@@ -168,6 +169,8 @@ class Game extends Component {
         isQuestionAnswered: false,
       });
       this.startCountDown();
+    } else {
+      history.push('/feedbacks');
     }
   }
 
@@ -226,6 +229,7 @@ function mapStateToProps(state) {
 Game.propTypes = {
   userName: PropTypes.string.isRequired,
   userEmail: PropTypes.string.isRequired,
+  history: PropTypes.func.isRequired,
 };
 
 export default connect(mapStateToProps)(Game);
