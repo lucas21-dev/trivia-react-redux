@@ -33,14 +33,12 @@ class Game extends Component {
   }
 
   async componentDidMount() {
-    const { triviaData } = this.state;
     const token = getLocalStorage('token');
+    const response = await fetchTriviaQuestions(token);
+    const triviaData = this.createShuffledAsnwerArray(response);
 
-    if (!triviaData) {
-      const response = await fetchTriviaQuestions(token);
+    this.setStateInDidMount(triviaData);
 
-      this.setStateInDidMount(response);
-    }
     this.startCountDown();
   }
 
@@ -80,6 +78,41 @@ class Game extends Component {
     return answersArray;
   }
 
+  createShuffledAsnwerArray(triviaData) {
+    const { results } = triviaData;
+    const shuffledTriviaResults = results.reduce((acc, curr) => {
+      const {
+        category,
+        correct_answer: correctAnswer,
+        difficulty,
+        question,
+        incorrect_answers: incorrectAnswers,
+        type,
+      } = curr;
+
+      const shuffledAnswersArray = this.shuffleAnswers(
+        incorrectAnswers,
+        correctAnswer,
+      );
+
+      acc = [
+        ...acc,
+        {
+          category,
+          correctAnswer,
+          difficulty,
+          question,
+          incorrectAnswers,
+          type,
+          shuffledAnswersArray,
+        },
+      ];
+      return acc;
+    }, []);
+
+    return shuffledTriviaResults;
+  }
+
   handleClick() {
     this.clearCountDownInterval();
 
@@ -103,18 +136,12 @@ class Game extends Component {
 
   renderActualQuestion() {
     const { triviaData, triviaIndex, isQuestionAnswered } = this.state;
-
     const {
       category,
       question,
-      correct_answer: correctAnswer,
-      incorrect_answers: incorrectAnswers,
-    } = triviaData.results[triviaIndex];
-
-    const shuffledAnswersArray = this.shuffleAnswers(
-      incorrectAnswers,
       correctAnswer,
-    );
+      shuffledAnswersArray,
+    } = triviaData[triviaIndex];
 
     const btnNextClassList = isQuestionAnswered
       ? 'btn-next-visible'
