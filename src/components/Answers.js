@@ -29,6 +29,7 @@ class Answers extends Component {
             <button
               aria-label="Answer"
               data-testid={ testId }
+              id={ testId }
               onClick={ handleClick }
               type="button"
               key={ index }
