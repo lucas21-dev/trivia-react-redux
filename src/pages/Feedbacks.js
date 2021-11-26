@@ -5,13 +5,23 @@ import { getLocalStorage } from '../helpers/handleLocalStorage';
 class Feedbacks extends Component {
   render() {
     const { player } = getLocalStorage('state');
+    const { assertions, score } = player;
     const MIN_ASSERTIONS = 3;
     return (
       <div>
         <Header />
-        <span data-testid="feedback-text">
-          { player.assertions >= MIN_ASSERTIONS ? 'Mandou bem!' : 'Podia ser melhor...' }
-        </span>
+        <p data-testid="feedback-text">
+          { assertions >= MIN_ASSERTIONS ? 'Mandou bem!' : 'Podia ser melhor...' }
+        </p>
+
+        <p>
+          Você acertou
+          <span data-testid="feedback-total-question">{` ${assertions} `}</span>
+          questões e ganhou
+          <span data-testid="feedback-total-score">{` ${score} `}</span>
+          pontos!
+        </p>
+
       </div>
     );
   }
