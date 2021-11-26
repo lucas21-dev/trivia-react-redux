@@ -32,15 +32,23 @@ class Feedbacks extends Component {
         >
           Jogar novamente
         </button>
+
+        <button
+          data-testid="btn-ranking"
+          type="button"
+          onClick={ () => history.push('/ranking') }
+        >
+          Ver Ranking
+        </button>
       </div>
     );
   }
 }
 
-Feedbacks.propTypes = ({
+Feedbacks.propTypes = {
   history: PropTypes.shape({
     push: PropTypes.func,
   }).isRequired,
-});
+};
 
 export default Feedbacks;

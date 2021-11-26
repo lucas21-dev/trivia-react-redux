@@ -1,6 +1,6 @@
 import { connect } from 'react-redux';
-import PropTypes from 'prop-types';
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import Loading from '../components/Loading';
 import Header from '../components/Header';
 import fetchTriviaQuestions from '../helpers/fetchTriviaQuestions';
@@ -27,7 +27,7 @@ class Game extends Component {
 
     this.renderActualQuestion = this.renderActualQuestion.bind(this);
     this.setStateInDidMount = this.setStateInDidMount.bind(this);
-    this.handleClick = this.handleClick.bind(this);
+    this.handleAnswerClick = this.handleAnswerClick.bind(this);
     this.handleNextBtnClick = this.handleNextBtnClick.bind(this);
     this.countDown = this.countDown.bind(this);
     this.clearCountDownInterval = this.clearCountDownInterval.bind(this);
@@ -53,6 +53,10 @@ class Game extends Component {
 
     this.setStateInDidMount(triviaData);
     this.startCountDown();
+  }
+
+  componentWillUnmount() {
+    this.clearCountDownInterval();
   }
 
   setStateInDidMount(triviaData) {
@@ -126,18 +130,18 @@ class Game extends Component {
     return shuffledTriviaResults;
   }
 
-  handleClick({ target }) {
+  handleAnswerClick({ target }) {
     if (target.id === 'correct-answer') {
       const { triviaData, triviaIndex } = this.state;
       const { userName, userEmail } = this.props;
       const { difficulty } = triviaData[triviaIndex];
-      const difficulties = {
+      const difficulties = { // Sugiro criar um estado local com essas infos para não precisar gerar processando extra
         hard: 3,
         medium: 2,
         easy: 1,
       };
-      const DEZ = 10;
-      const timer = window.document.getElementById('timer');
+      const DEZ = 10; // Nome em inglês
+      const timer = window.document.getElementById('timer'); // Essa info já está no estado local 'timerInSecs'
       const exactTime = Number(timer.textContent);
       const { player } = getLocalStorage('state');
       const userScore = DEZ + (exactTime * difficulties[difficulty]);
@@ -145,9 +149,9 @@ class Game extends Component {
       const state = {
         player: {
           name: userName,
-          assertions: player.assertions + 1,
-          score: player.score + userScore,
-          gravatarEmail: userEmail,
+          assertions: player.assertions + 1, // Salvar essas informações no store e somente lá salvar no local storage
+          score: player.score + userScore, // Essas mudanças fariam a aplicação ficar dinâmica, no momento ela está estática
+          gravatarEmail: userEmail, // por causa disso a pontuação não é atualizada no header.
         },
       };
       setLocalStorage('state', state);
@@ -162,6 +166,7 @@ class Game extends Component {
     const { triviaIndex } = this.state;
     const { history } = this.props;
     const MAX_QUESTIONS = 4;
+    console.log(history);
 
     if (triviaIndex < MAX_QUESTIONS) {
       this.setState({
@@ -191,7 +196,7 @@ class Game extends Component {
       <div>
         <Questions category={ category } question={ question } />
         <Answers
-          handleClick={ this.handleClick }
+          handleClick={ this.handleAnswerClick }
           correctAnswer={ correctAnswer }
           answersArray={ shuffledAnswersArray }
           isQuestionAnswered={ isQuestionAnswered }
@@ -229,7 +234,9 @@ function mapStateToProps(state) {
 Game.propTypes = {
   userName: PropTypes.string.isRequired,
   userEmail: PropTypes.string.isRequired,
-  history: PropTypes.func.isRequired,
+  history: PropTypes.shape({
+    push: PropTypes.func,
+  }).isRequired,
 };
 
 export default connect(mapStateToProps)(Game);
