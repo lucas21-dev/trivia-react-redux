@@ -1,9 +1,9 @@
-import React from 'react';
+import React, { Component } from 'react';
 import md5 from 'crypto-js/md5';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 
-class Header extends React.Component {
+class Header extends Component {
   render() {
     const { userEmail, userName } = this.props;
     const userRash = md5(userEmail).toString();

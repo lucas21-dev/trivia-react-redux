@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
-class Answers extends React.Component {
+class Answers extends Component {
   render() {
     const { handleClick, correctAnswer, answersArray, isQuestionAnswered } = this.props;
 

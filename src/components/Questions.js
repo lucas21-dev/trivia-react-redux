@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
-class Questions extends React.Component {
+class Questions extends Component {
   render() {
     const { category, question } = this.props;
     const innerHTML = {
