@@ -4,7 +4,6 @@ import { setLocalStorage } from '../../helpers/handleLocalStorage';
 const initialState = {
   email: '',
   name: '',
-  isFetching: false,
 };
 
 function loginReducer(state = initialState, { type, payload }) {
@@ -13,7 +12,7 @@ function loginReducer(state = initialState, { type, payload }) {
     return { ...state, isFetching: true };
   case LOGIN: {
     setLocalStorage(payload.keyName, payload.token);
-    return { ...state, email: payload.email, name: payload.name, isFetching: false };
+    return { ...state, email: payload.email, name: payload.name };
   }
   default:
     return state;
