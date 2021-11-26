@@ -145,7 +145,7 @@ class Game extends Component {
       const state = {
         player: {
           name: userName,
-          assertions: 0,
+          assertions: player.assertions + 1,
           score: player.score + userScore,
           gravatarEmail: userEmail,
         },
