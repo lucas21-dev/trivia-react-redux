@@ -22,7 +22,7 @@ class Answers extends React.Component {
             <button
               aria-label="Answer"
               data-testid={ testId }
-              className={ testId }
+              id={ testId }
               onClick={ handleClick }
               type="button"
               key={ index }

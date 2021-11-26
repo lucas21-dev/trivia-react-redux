@@ -1,8 +1,10 @@
+import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import Loading from '../components/Loading';
 import Header from '../components/Header';
 import fetchTriviaQuestions from '../helpers/fetchTriviaQuestions';
-import { getLocalStorage } from '../helpers/handleLocalStorage';
+import { getLocalStorage, setLocalStorage } from '../helpers/handleLocalStorage';
 import Questions from '../components/Questions';
 import Answers from '../components/Answers';
 import '../styles/game.css';
@@ -34,8 +36,17 @@ class Game extends Component {
 
   async componentDidMount() {
     const { triviaData } = this.state;
+    const { userName } = this.props;
+    const icon = window.document.getElementById('user-icon');
+    console.log(icon)
     const token = getLocalStorage('token');
-
+    const ranking = {
+      name: userName,
+      score: 0,
+      picture: icon.src,
+    };
+    setLocalStorage('ranking', ranking);
+    console.log(ranking);
     if (!triviaData) {
       const response = await fetchTriviaQuestions(token);
 
@@ -80,7 +91,31 @@ class Game extends Component {
     return answersArray;
   }
 
-  handleClick() {
+  handleClick({ target }) {
+    if (target.id === 'correct-answer') {
+      const icon = window.document.getElementById('user-icon');
+      const { triviaData, triviaIndex } = this.state;
+      const { userName } = this.props;
+      const { difficulty } = triviaData.results[triviaIndex];
+      const difficulties = {
+        hard: 3,
+        medium: 2,
+        easy: 1,
+      };
+      const DEZ = 10;
+      const timer = window.document.getElementById('timer');
+      const exactTime = Number(timer.textContent);
+      const lastScore = JSON.parse(localStorage.getItem('ranking'));
+      const userScore = DEZ + (exactTime * difficulties[difficulty]);
+      const ranking = {
+        name: userName,
+        score: lastScore.score + userScore,
+        picture: icon.src,
+      };
+      setLocalStorage('ranking', ranking);
+      console.log(ranking);
+    }
+
     this.clearCountDownInterval();
 
     this.setState({
@@ -155,4 +190,13 @@ class Game extends Component {
   }
 }
 
-export default Game;
+function mapStateToProps(state) {
+  return ({ userEmail: state.login.email, userName: state.login.name });
+}
+
+Game.propTypes = {
+  userEmail: PropTypes.string.isRequired,
+  userName: PropTypes.string.isRequired,
+};
+
+export default connect(mapStateToProps)(Game);

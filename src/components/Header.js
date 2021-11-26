@@ -13,6 +13,7 @@ class Header extends React.Component {
           src={ `https://www.gravatar.com/avatar/${userRash}` }
           alt="User avatar"
           data-testid="header-profile-picture"
+          id="user-icon"
         />
         <h1 data-testid="header-player-name">{ userName }</h1>
         <h2 data-testid="header-score">0</h2>
