@@ -1,10 +1,13 @@
-import { connect } from 'react-redux';
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import Loading from '../components/Loading';
 import Header from '../components/Header';
 import fetchTriviaQuestions from '../helpers/fetchTriviaQuestions';
-import { getLocalStorage, setLocalStorage } from '../helpers/handleLocalStorage';
+import {
+  getLocalStorage,
+  sendRankingToStorage,
+  setLocalStorage } from '../helpers/handleLocalStorage';
 import Questions from '../components/Questions';
 import Answers from '../components/Answers';
 import '../styles/game.css';
@@ -60,10 +63,7 @@ class Game extends Component {
   }
 
   setStateInDidMount(triviaData) {
-    this.setState({
-      triviaData,
-      loading: false,
-    });
+    this.setState({ triviaData, loading: false });
   }
 
   startCountDown() {
@@ -157,16 +157,13 @@ class Game extends Component {
       setLocalStorage('state', state);
     }
     this.clearCountDownInterval();
-    this.setState({
-      isQuestionAnswered: true,
-    });
+    this.setState({ isQuestionAnswered: true });
   }
 
   handleNextBtnClick() {
     const { triviaIndex } = this.state;
-    const { history } = this.props;
+    const { history, userName, userIcon } = this.props;
     const MAX_QUESTIONS = 4;
-    console.log(history);
 
     if (triviaIndex < MAX_QUESTIONS) {
       this.setState({
@@ -175,6 +172,13 @@ class Game extends Component {
       });
       this.startCountDown();
     } else {
+      const { player } = getLocalStorage('state');
+      const userRank = {
+        name: userName,
+        score: player.score,
+        picture: userIcon,
+      };
+      sendRankingToStorage(userRank);
       history.push('/feedbacks');
     }
   }
@@ -227,13 +231,16 @@ class Game extends Component {
   }
 }
 
-function mapStateToProps(state) {
-  return ({ userEmail: state.login.email, userName: state.login.name });
-}
+const mapStateToProps = (state) => ({
+  userEmail: state.playerInfo.email,
+  userName: state.playerInfo.name,
+  userIcon: state.playerInfo.userIcon,
+});
 
 Game.propTypes = {
   userName: PropTypes.string.isRequired,
   userEmail: PropTypes.string.isRequired,
+  userIcon: PropTypes.string.isRequired,
   history: PropTypes.shape({
     push: PropTypes.func,
   }).isRequired,

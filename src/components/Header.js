@@ -3,16 +3,19 @@ import md5 from 'crypto-js/md5';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { getLocalStorage } from '../helpers/handleLocalStorage';
+import { getUserIcon } from '../redux/actions';
 
 class Header extends Component {
   render() {
-    const { userEmail, userName } = this.props;
+    const { userEmail, userName, dispatch } = this.props;
     const userRash = md5(userEmail).toString();
+    const userIcon = `https://www.gravatar.com/avatar/${userRash}`;
     const { player } = getLocalStorage('state');
+    dispatch(getUserIcon(userIcon));
     return (
       <header>
         <img
-          src={ `https://www.gravatar.com/avatar/${userRash}` }
+          src={ userIcon }
           alt="User avatar"
           data-testid="header-profile-picture"
           id="user-icon"
@@ -25,12 +28,13 @@ class Header extends Component {
 }
 
 function mapStateToProps(state) {
-  return ({ userEmail: state.login.email, userName: state.login.name });
+  return ({ userEmail: state.playerInfo.email, userName: state.playerInfo.name });
 }
 
 Header.propTypes = {
   userEmail: PropTypes.string.isRequired,
   userName: PropTypes.string.isRequired,
+  dispatch: PropTypes.func.isRequired,
 };
 
 export default connect(mapStateToProps)(Header);
