@@ -3,15 +3,13 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import Loading from '../components/Loading';
 import Header from '../components/Header';
+import { updateScore } from '../redux/actions';
 import fetchTriviaQuestions from '../helpers/fetchTriviaQuestions';
-import {
-  getLocalStorage,
-  sendRankingToStorage,
-  setLocalStorage } from '../helpers/handleLocalStorage';
+import { getLocalStorage, sendRankingToStorage } from '../helpers/handleLocalStorage';
 import Questions from '../components/Questions';
 import Answers from '../components/Answers';
-import '../styles/game.css';
 import Timer from '../components/Timer';
+import '../styles/game.css';
 
 class Game extends Component {
   constructor() {
@@ -19,10 +17,15 @@ class Game extends Component {
 
     this.state = {
       triviaData: [],
-      loading: true,
+      isFetching: true,
       triviaIndex: 0,
       isQuestionAnswered: false,
       timerInSecs: 30,
+      difficulties: {
+        hard: 3,
+        medium: 2,
+        easy: 1,
+      },
     };
 
     this.timer = 0;
@@ -35,26 +38,14 @@ class Game extends Component {
     this.countDown = this.countDown.bind(this);
     this.clearCountDownInterval = this.clearCountDownInterval.bind(this);
     this.startCountDown = this.startCountDown.bind(this);
+    this.calcPlayerScore = this.calcPlayerScore.bind(this);
+    this.setRankLocalStorage = this.setRankLocalStorage.bind(this);
+    this.createShuffledAsnwerArray = this.createShuffledAsnwerArray.bind(this);
+    this.shuffleAnswers = this.shuffleAnswers.bind(this);
   }
 
-  async componentDidMount() {
-    const token = getLocalStorage('token');
-    const response = await fetchTriviaQuestions(token);
-    const triviaData = this.createShuffledAsnwerArray(response);
-
-    const { userName, userEmail } = this.props;
-
-    const state = {
-      player: {
-        name: userName,
-        assertions: 0,
-        score: 0,
-        gravatarEmail: userEmail,
-      },
-    };
-    setLocalStorage('state', state);
-
-    this.setStateInDidMount(triviaData);
+  componentDidMount() {
+    this.setStateInDidMount();
     this.startCountDown();
   }
 
@@ -62,8 +53,21 @@ class Game extends Component {
     this.clearCountDownInterval();
   }
 
-  setStateInDidMount(triviaData) {
-    this.setState({ triviaData, loading: false });
+  async setStateInDidMount() {
+    const token = getLocalStorage('token');
+    const response = await fetchTriviaQuestions(token);
+    const triviaData = this.createShuffledAsnwerArray(response);
+
+    this.setState({ triviaData: [...triviaData], isFetching: false });
+  }
+
+  setRankLocalStorage(userName, gravatarEmail, userScore) {
+    const userRank = {
+      name: userName,
+      score: userScore,
+      picture: gravatarEmail,
+    };
+    sendRankingToStorage(userRank);
   }
 
   startCountDown() {
@@ -130,57 +134,40 @@ class Game extends Component {
     return shuffledTriviaResults;
   }
 
+  calcPlayerScore() {
+    const { triviaData, triviaIndex, difficulties, timerInSecs } = this.state;
+    const { dispatch } = this.props;
+    const { difficulty } = triviaData[triviaIndex];
+    const BASE_POINTS = 10;
+    const score = BASE_POINTS + (timerInSecs * difficulties[difficulty]);
+
+    dispatch(updateScore(score));
+  }
+
   handleAnswerClick({ target }) {
     if (target.id === 'correct-answer') {
-      const { triviaData, triviaIndex } = this.state;
-      const { userName, userEmail } = this.props;
-      const { difficulty } = triviaData[triviaIndex];
-      const difficulties = { // Sugiro criar um estado local com essas infos para não precisar gerar processando extra
-        hard: 3,
-        medium: 2,
-        easy: 1,
-      };
-      const DEZ = 10; // Nome em inglês
-      const timer = window.document.getElementById('timer'); // Essa info já está no estado local 'timerInSecs'
-      const exactTime = Number(timer.textContent);
-      const { player } = getLocalStorage('state');
-      const userScore = DEZ + (exactTime * difficulties[difficulty]);
-
-      const state = {
-        player: {
-          name: userName,
-          assertions: player.assertions + 1, // Salvar essas informações no store e somente lá salvar no local storage
-          score: player.score + userScore, // Essas mudanças fariam a aplicação ficar dinâmica, no momento ela está estática
-          gravatarEmail: userEmail, // por causa disso a pontuação não é atualizada no header.
-        },
-      };
-      setLocalStorage('state', state);
+      this.calcPlayerScore();
     }
+
     this.clearCountDownInterval();
     this.setState({ isQuestionAnswered: true });
   }
 
   handleNextBtnClick() {
-    const { triviaIndex } = this.state;
-    const { history, userName, userIcon } = this.props;
-    const MAX_QUESTIONS = 4;
+    const { triviaIndex, triviaData } = this.state;
+    const { history, userName, gravatarEmail, userScore } = this.props;
+    const LAST_QUESTION = triviaData.length - 1;
 
-    if (triviaIndex < MAX_QUESTIONS) {
+    if (triviaIndex < LAST_QUESTION) {
       this.setState({
         triviaIndex: triviaIndex + 1,
         isQuestionAnswered: false,
       });
-      this.startCountDown();
-    } else {
-      const { player } = getLocalStorage('state');
-      const userRank = {
-        name: userName,
-        score: player.score,
-        picture: userIcon,
-      };
-      sendRankingToStorage(userRank);
-      history.push('/feedbacks');
+      return this.startCountDown();
     }
+
+    this.setRankLocalStorage(userName, gravatarEmail, userScore);
+    history.push('/feedbacks');
   }
 
   renderActualQuestion() {
@@ -218,13 +205,13 @@ class Game extends Component {
   }
 
   render() {
-    const { loading, timerInSecs } = this.state;
+    const { isFetching, timerInSecs } = this.state;
 
     return (
       <div>
         <Header />
         <h1>Jogo de Trivia</h1>
-        {loading ? <Loading /> : this.renderActualQuestion()}
+        {isFetching ? <Loading /> : this.renderActualQuestion()}
         <Timer timerInSecs={ timerInSecs } />
       </div>
     );
@@ -232,18 +219,19 @@ class Game extends Component {
 }
 
 const mapStateToProps = (state) => ({
-  userEmail: state.playerInfo.email,
   userName: state.playerInfo.name,
-  userIcon: state.playerInfo.userIcon,
+  userScore: state.playerInfo.score,
+  gravatarEmail: state.playerInfo.gravatarEmail,
 });
 
 Game.propTypes = {
   userName: PropTypes.string.isRequired,
-  userEmail: PropTypes.string.isRequired,
-  userIcon: PropTypes.string.isRequired,
+  userScore: PropTypes.number.isRequired,
+  gravatarEmail: PropTypes.string.isRequired,
   history: PropTypes.shape({
     push: PropTypes.func,
   }).isRequired,
+  dispatch: PropTypes.func.isRequired,
 };
 
 export default connect(mapStateToProps)(Game);
