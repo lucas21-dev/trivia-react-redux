@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import md5 from 'crypto-js/md5';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
@@ -20,6 +21,7 @@ class Login extends Component {
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.isFormValid = this.isFormValid.bind(this);
+    this.createGravatarEmail = this.createGravatarEmail.bind(this);
   }
 
   isFormValid() {
@@ -37,29 +39,29 @@ class Login extends Component {
     this.setState({ [name]: value }, this.isFormValid);
   }
 
+  createGravatarEmail(email) {
+    const emailRash = md5(email).toString();
+    const gravatarEmail = `https://www.gravatar.com/avatar/${emailRash}`;
+
+    return gravatarEmail;
+  }
+
   async handleSubmit(e) {
     e.preventDefault();
     const { name, email } = this.state;
     const { history, dispatch } = this.props;
+    const gravatarEmail = this.createGravatarEmail(email);
     const { token } = await fetchTokenAPI();
 
     const payload = {
       name,
       email,
+      assertions: 0,
+      score: 0,
+      gravatarEmail,
     };
 
-    const state = {
-      player: {
-        name,
-        assertions: 0,
-        score: 0,
-        gravatarEmail: '',
-      },
-    };
-
-    setLocalStorage('state', state);
     setLocalStorage('token', token);
-
     dispatch(login(payload));
 
     history.push('/game');
