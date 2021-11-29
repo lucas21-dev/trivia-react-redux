@@ -7,7 +7,7 @@ const initialState = {
   assertions: 0,
   score: 0,
   gravatarEmail: '',
-  apiURL: '',
+  apiURL: 'https://opentdb.com/api.php?amount=5',
 };
 
 function playerInfo(state = initialState, { type, payload }) {

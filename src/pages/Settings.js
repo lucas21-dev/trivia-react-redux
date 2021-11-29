@@ -45,7 +45,7 @@ class Settings extends Component {
 
   handleChange({ target }) {
     const { name, value } = target;
-    this.setState({ [name]: value }, this.isFormValid);
+    this.setState({ [name]: value });
   }
 
   handleResetButton() {
