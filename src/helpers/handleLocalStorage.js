@@ -5,11 +5,8 @@ export const setLocalStorage = (keyName, data) => {
 export const getLocalStorage = (keyName) => JSON.parse(localStorage.getItem(keyName));
 
 export const sendRankingToStorage = (userRank) => {
-  let ranking = getLocalStorage('ranking');
-  if (!ranking) {
-    ranking = [];
-  }
+  const ranking = getLocalStorage('ranking');
 
-  const newRank = [...ranking, userRank];
+  const newRank = !ranking ? [userRank] : [...ranking, userRank];
   setLocalStorage('ranking', newRank);
 };
