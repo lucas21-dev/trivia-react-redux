@@ -54,8 +54,9 @@ class Game extends Component {
   }
 
   async setStateInDidMount() {
+    const { apiURL } = this.props;
     const token = getLocalStorage('token');
-    const response = await fetchTriviaQuestions(token);
+    const response = await fetchTriviaQuestions(token, apiURL);
     const triviaData = this.createShuffledAsnwerArray(response);
 
     this.setState({ triviaData: [...triviaData], isFetching: false });
@@ -219,12 +220,14 @@ class Game extends Component {
 }
 
 const mapStateToProps = (state) => ({
+  apiURL: state.playerInfo.apiURL,
   userName: state.playerInfo.name,
   userScore: state.playerInfo.score,
   gravatarEmail: state.playerInfo.gravatarEmail,
 });
 
 Game.propTypes = {
+  apiURL: PropTypes.string.isRequired,
   userName: PropTypes.string.isRequired,
   userScore: PropTypes.number.isRequired,
   gravatarEmail: PropTypes.string.isRequired,

@@ -1,5 +1,5 @@
 import { setLocalStorage } from '../../helpers/handleLocalStorage';
-import { LOGIN, UPDATE_SCORE } from '../actions';
+import { LOGIN, UPDATE_SCORE, SET_API_ENDPOINT } from '../actions';
 
 const initialState = {
   email: '',
@@ -7,6 +7,7 @@ const initialState = {
   assertions: 0,
   score: 0,
   gravatarEmail: '',
+  apiURL: '',
 };
 
 function playerInfo(state = initialState, { type, payload }) {
@@ -44,6 +45,12 @@ function playerInfo(state = initialState, { type, payload }) {
     };
   }
 
+  case SET_API_ENDPOINT: {
+    return {
+      ...state,
+      apiURL: payload,
+    };
+  }
   default:
     return state;
   }
