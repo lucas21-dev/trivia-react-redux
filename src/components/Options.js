@@ -5,10 +5,13 @@ class Options extends Component {
   render() {
     const { categories, handleChange } = this.props;
     return (
-      <>
-        <h1 data-testid="settings-title">Configurações</h1>
+      <div>
         <div>
-          <div>
+          <h1 data-testid="settings-title">CONFIGURAÇÕES</h1>
+          <div className="quantity">
+            <div className="option-title">
+              QUANTIDADE DE PERGUNTAS:
+            </div>
             <select onChange={ handleChange } name="quantity" defaultValue="any-quantity">
               <option disabled value="any-quantity">-</option>
               <option value="5">5</option>
@@ -16,7 +19,10 @@ class Options extends Component {
               <option value="15">15</option>
             </select>
           </div>
-          <div>
+          <div className="difficulty">
+            <div className="option-title">
+              DIFICULDADE:
+            </div>
             <select onChange={ handleChange } name="category" defaultValue="any-category">
               <option disabled value="any-category">-</option>
               {categories.map(({ name, id }) => (
@@ -24,7 +30,10 @@ class Options extends Component {
               ))}
             </select>
           </div>
-          <div>
+          <div className="category">
+            <div className="option-title">
+              CATEGORIA:
+            </div>
             <select
               onChange={ handleChange }
               name="difficulty"
@@ -37,7 +46,10 @@ class Options extends Component {
               <option value="hard">Difícil</option>
             </select>
           </div>
-          <div>
+          <div className="type">
+            <div className="option-title">
+              TIPO DE PERGUNTAS:
+            </div>
             <select onChange={ handleChange } name="type" defaultValue="any-type">
               <option disabled value="any-type">-</option>
               <option value="">Misturado</option>
@@ -46,7 +58,7 @@ class Options extends Component {
             </select>
           </div>
         </div>
-      </>
+      </div>
     );
   }
 }
