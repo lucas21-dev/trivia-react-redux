@@ -231,7 +231,9 @@ Game.propTypes = {
   userName: PropTypes.string.isRequired,
   userScore: PropTypes.number.isRequired,
   gravatarEmail: PropTypes.string.isRequired,
-  history: PropTypes.shape({ push: PropTypes.func }).isRequired,
+  history: PropTypes.shape({
+    push: PropTypes.func,
+  }).isRequired,
   dispatch: PropTypes.func.isRequired,
 };
 

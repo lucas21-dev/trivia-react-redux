@@ -6,6 +6,7 @@ import Options from '../components/Options';
 import fetchCategoriesApi from '../helpers/fetchCategoriesAPI';
 import { BASE_URL } from '../helpers/fetchTriviaQuestions';
 import { setAPIEndpoint } from '../redux/actions';
+import '../styles/settings.css';
 
 class Settings extends Component {
   constructor(props) {
@@ -74,16 +75,26 @@ class Settings extends Component {
       <Loading />
     ) : (
       <section>
-        <Options
-          categories={ categories }
-          handleChange={ this.handleChange }
-          difficulty={ difficulty }
-          type={ type }
-          category={ category }
-          quantity={ quantity }
-        />
-        <button onClick={ this.handleResetButton } type="button">Resetar</button>
-        <button onClick={ this.handlePlayButton } type="button">Jogar</button>
+        <div className="container-xl">
+          <div className="row">
+            <div className="col" />
+            <div className="col">
+              <Options
+                categories={ categories }
+                handleChange={ this.handleChange }
+                difficulty={ difficulty }
+                type={ type }
+                category={ category }
+                quantity={ quantity }
+              />
+              <div className="buttons">
+                <button className="reset" onClick={ this.handleResetButton } type="button">RESETAR</button>
+                <button className="play" onClick={ this.handlePlayButton } type="button">JOGAR</button>
+              </div>
+            </div>
+            <div className="col" />
+          </div>
+        </div>
       </section>
     );
   }
