@@ -7,6 +7,7 @@ import LoginForms from '../components/LoginForms';
 import { login } from '../redux/actions';
 import { setLocalStorage } from '../helpers/handleLocalStorage';
 import { fetchTokenAPI } from '../helpers/fetchTokenAPI';
+import brain from '../images/brain.png';
 
 class Login extends Component {
   constructor(props) {
@@ -70,25 +71,33 @@ class Login extends Component {
   render() {
     const { name, email, isBtnDisabled } = this.state;
     return (
-      <>
-        <section className="d-flex justify-content-center align-items-center">
-          <LoginForms
-            name={ name }
-            email={ email }
-            isBtnDisabled={ isBtnDisabled }
-            handleChange={ this.handleChange }
-            handleSubmit={ this.handleSubmit }
-          />
-        </section>
-        <Link to="/settings">
-          <button
-            type="button"
-            data-testid="btn-settings"
-          >
-            Configurações
-          </button>
-        </Link>
-      </>
+      <section>
+        <div className="container">
+          <div className="row">
+            <div className="col">
+              <img src={ brain } alt="Cérebro laranja comemorando" />
+            </div>
+            <div className="col">
+              <h1>TRIVIA</h1>
+              <LoginForms
+                name={ name }
+                email={ email }
+                isBtnDisabled={ isBtnDisabled }
+                handleChange={ this.handleChange }
+                handleSubmit={ this.handleSubmit }
+              />
+              <Link to="/settings">
+                <button
+                  type="button"
+                  data-testid="btn-settings"
+                >
+                  Configurações
+                </button>
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
     );
   }
 }
