@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import md5 from 'crypto-js/md5';
-import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import LoginForms from '../components/LoginForms';
@@ -8,6 +7,8 @@ import { login } from '../redux/actions';
 import { setLocalStorage } from '../helpers/handleLocalStorage';
 import { fetchTokenAPI } from '../helpers/fetchTokenAPI';
 import brain from '../images/brain.png';
+import thunder from '../images/raio.png';
+import '../styles/login.css';
 
 class Login extends Component {
   constructor(props) {
@@ -71,14 +72,25 @@ class Login extends Component {
   render() {
     const { name, email, isBtnDisabled } = this.state;
     return (
-      <section>
+      <section className="p-5">
         <div className="container">
-          <div className="row">
-            <div className="col">
-              <img src={ brain } alt="Cérebro laranja comemorando" />
+          <div className="row align-items-center justify-content-center">
+            <div className="col w-50">
+              <img
+                className="brain-img"
+                src={ brain }
+                alt="Cérebro laranja comemorando"
+              />
             </div>
-            <div className="col">
-              <h1>TRIVIA</h1>
+            <div className="form-wrapper col w-50">
+              <div className="d-flex">
+                <h1 className="trivia-title">TRIVIA</h1>
+                <img
+                  className="title-thunder"
+                  src={ thunder }
+                  alt="três raios laranjas"
+                />
+              </div>
               <LoginForms
                 name={ name }
                 email={ email }
@@ -86,14 +98,6 @@ class Login extends Component {
                 handleChange={ this.handleChange }
                 handleSubmit={ this.handleSubmit }
               />
-              <Link to="/settings">
-                <button
-                  type="button"
-                  data-testid="btn-settings"
-                >
-                  Configurações
-                </button>
-              </Link>
             </div>
           </div>
         </div>

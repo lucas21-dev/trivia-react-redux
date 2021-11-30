@@ -1,0 +1,41 @@
+@import url('https://fonts.googleapis.com/css2?family=Nunito+Sans&family=Tourney:ital,wght@1,900&display=swap') ;
+
+.brain-img {
+  width: 100%;
+}
+
+.title-thunder {
+  height: 95.4px;
+  margin: -55px 220px;
+  position: absolute;
+  transform: rotate(-33.47deg);
+  width: 89px;
+}
+
+.trivia-title {
+  font-size: 4rem;
+}
+
+.form-wrapper {
+  align-items: center;
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: stretch;
+}
+
+.login-input {
+  border: solid 1px #208b73;
+  border-radius: 25px;
+  font-family: NunitoSans , sans-serif;
+  height: 55px;
+  width: 383px;
+}
+
+.settings-btn {
+  color: rgb(240, 78, 35);
+  font-size: 32px;
+}
+
+.settings-btn:active {
+  transform: translateY(4px);
+}

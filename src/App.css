@@ -3,5 +3,20 @@
 body {
   background-color: rgb(29, 31, 37);
   color: rgb(253, 184, 19);
-  font-family: Tourney , cursive;
+  font-family: Tourney , sans-serif;
+}
+
+.trivia-btn-round {
+  background-color: rgb(255, 195, 50);
+  border: none;
+  border-radius: 25px;
+  color: rgb(29, 31, 37);
+  cursor: pointer;
+  font-size: 1.7rem;
+  height: 46px;
+  width: 167px;
+}
+
+.trivia-btn-round:active {
+  transform: translateY(4px);
 }
